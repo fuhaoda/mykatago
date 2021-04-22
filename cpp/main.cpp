@@ -103,6 +103,8 @@ static int handleSubcommand(const string& subcommand, int argc, const char* argv
     return MainCmds::runsearchtestsv8(argc-1,&argv[1]);
   else if(subcommand == "runselfplayinittests")
     return MainCmds::runselfplayinittests(argc-1,&argv[1]);
+  else if(subcommand == "runselfplayinitstattests")
+    return MainCmds::runselfplayinitstattests(argc-1,&argv[1]);
   else if(subcommand == "runsekitrainwritetests")
     return MainCmds::runsekitrainwritetests(argc-1,&argv[1]);
   else if(subcommand == "runnnonmanyposestest")
@@ -121,6 +123,8 @@ static int handleSubcommand(const string& subcommand, int argc, const char* argv
     return MainCmds::viewstartposes(argc-1,&argv[1]);
   else if(subcommand == "demoplay")
     return MainCmds::demoplay(argc-1,&argv[1]);
+  else if(subcommand == "sampleinitializations")
+    return MainCmds::sampleinitializations(argc-1,&argv[1]);
   else if(subcommand == "printclockinfo")
     return MainCmds::printclockinfo(argc-1,&argv[1]);
   else if(subcommand == "sandbox")
@@ -172,11 +176,11 @@ int main(int argc, const char* argv[]) {
 
 
 string Version::getKataGoVersion() {
-  return string("1.8.1");
+  return string("1.8.2");
 }
 
 string Version::getKataGoVersionForHelp() {
-  return string("KataGo v1.8.1");
+  return string("KataGo v1.8.2");
 }
 
 string Version::getKataGoVersionFullInfo() {
