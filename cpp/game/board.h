@@ -48,13 +48,13 @@ namespace PlayerIO {
 typedef short Loc;
 namespace Location
 {
-  Loc getLoc(int x, int y, int x_size);
+  Loc getLoc(int x, int y, int x_size); //make x and y as short should also be OK
   int getX(Loc loc, int x_size);
   int getY(Loc loc, int x_size);
 
   void getAdjacentOffsets(short adj_offsets[8], int x_size);
   bool isAdjacent(Loc loc0, Loc loc1, int x_size);
-  Loc getMirrorLoc(Loc loc, int x_size, int y_size);
+  Loc getMirrorLoc(Loc loc, int x_size, int y_size); //this can be used to augment data, mirror with center point. todo, add a rotate function, then we can have 8 cases
   Loc getCenterLoc(int x_size, int y_size);
   bool isCentral(Loc loc, int x_size, int y_size);
   int distance(Loc loc0, Loc loc1, int x_size);

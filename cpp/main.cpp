@@ -60,6 +60,7 @@ runsekitrainwritetests : Run some tests involving seki train output
 )%%" << endl;
 }
 
+// instead of using static int, it is better to make it within a namespace. static int foo is an old way
 static int handleSubcommand(const string& subcommand, int argc, const char* argv[]) {
   if(subcommand == "analysis")
     return MainCmds::analysis(argc-1,&argv[1]);

@@ -32,7 +32,7 @@ const Hash128 Board::ZOBRIST_GAME_IS_OVER = //Based on sha256 hash of Board::ZOB
   Hash128(0xb6f9e465597a77eeULL, 0xf1d583d960a4ce7fULL);
 
 //LOCATION--------------------------------------------------------------------------------
-Loc Location::getLoc(int x, int y, int x_size)
+Loc Location::getLoc(int x, int y, int x_size) //todo: consider to make x_size as a class variable
 {
   return (x+1) + (y+1)*(x_size+1);
 }
@@ -46,11 +46,11 @@ int Location::getY(Loc loc, int x_size)
 }
 void Location::getAdjacentOffsets(short adj_offsets[8], int x_size)
 {
-  adj_offsets[0] = -(x_size+1);
+  adj_offsets[0] = -(x_size+1); //adj offsets
   adj_offsets[1] = -1;
   adj_offsets[2] = 1;
   adj_offsets[3] = (x_size+1);
-  adj_offsets[4] = -(x_size+1)-1;
+  adj_offsets[4] = -(x_size+1)-1; //diag offsets
   adj_offsets[5] = -(x_size+1)+1;
   adj_offsets[6] = (x_size+1)-1;
   adj_offsets[7] = (x_size+1)+1;
@@ -79,7 +79,7 @@ bool Location::isCentral(Loc loc, int x_size, int y_size) {
   return x >= (x_size-1)/2 && x <= x_size/2 && y >= (y_size-1)/2 && y <= y_size/2;
 }
 
-
+//todo get rid of these #defines
 #define FOREACHADJ(BLOCK) {int ADJOFFSET = -(x_size+1); {BLOCK}; ADJOFFSET = -1; {BLOCK}; ADJOFFSET = 1; {BLOCK}; ADJOFFSET = x_size+1; {BLOCK}};
 #define ADJ0 (-(x_size+1))
 #define ADJ1 (-1)
@@ -98,12 +98,13 @@ Board::Board(int x, int y)
   init(x,y);
 }
 
-
+//todo: consider to add move constructor and copy move constructor
 Board::Board(const Board& other)
 {
   x_size = other.x_size;
   y_size = other.y_size;
-
+  //default copy constructor will not do a deep copy of dynamic allocated memories (since it used a naive array not a vector.)
+  // todo: run a small experiment to compare array vs vector vs std::array
   memcpy(colors, other.colors, sizeof(Color)*MAX_ARR_SIZE);
   memcpy(chain_data, other.chain_data, sizeof(ChainData)*MAX_ARR_SIZE);
   memcpy(chain_head, other.chain_head, sizeof(Loc)*MAX_ARR_SIZE);
@@ -526,7 +527,7 @@ bool Board::wouldBeKoCapture(Loc loc, Player pla) const {
   return true;
 }
 
-Loc Board::getKoCaptureLoc(Loc loc, Player pla) const {
+Loc Board::getKoCaptureLoc(Loc loc, Player pla) const { //todo: this can be combined with the aove code wouldBeKoCapture
   if(colors[loc] != C_EMPTY)
     return NULL_LOC;
   //Check that surounding points are are all opponent owned and exactly one of them is capturable
@@ -575,7 +576,7 @@ bool Board::isAdjacentToChain(Loc loc, Loc chain) const {
     return false;
   FOREACHADJ(
     Loc adj = loc + ADJOFFSET;
-    if(colors[adj] == colors[chain] && chain_head[adj] == chain_head[chain])
+    if(colors[adj] == colors[chain] && chain_head[adj] == chain_head[chain]) //loc and chain may not adj.
       return true;
   );
   return false;
@@ -610,7 +611,7 @@ bool Board::isNonPassAliveSelfConnection(Loc loc, Player pla, Color* passAliveAr
   return false;
 }
 
-bool Board::isEmpty() const {
+bool Board::isEmpty() const { //is empty for the whole board
   for(int y = 0; y < y_size; y++) {
     for(int x = 0; x < x_size; x++) {
       Loc loc = Location::getLoc(x,y,x_size);
@@ -647,7 +648,7 @@ int Board::numPlaStonesOnBoard(Player pla) const {
 
 bool Board::setStone(Loc loc, Color color)
 {
-  if(loc < 0 || loc >= MAX_ARR_SIZE || colors[loc] == C_WALL)
+  if(loc < 0 || loc >= MAX_ARR_SIZE || colors[loc] == C_WALL) //these codes could be removed and make this an unsafe method to speed up.
     return false;
   if(color != C_BLACK && color != C_WHITE && color != C_EMPTY)
     return false;
@@ -655,11 +656,11 @@ bool Board::setStone(Loc loc, Color color)
   if(colors[loc] == color)
   {}
   else if(colors[loc] == C_EMPTY)
-    playMoveAssumeLegal(loc,color);
+    playMoveAssumeLegal(loc,color); //i think this is a bad design. it can both add and remove a stone in a single function.
   else if(color == C_EMPTY)
-    removeSingleStone(loc);
+    removeSingleStone(loc); //remove
   else {
-    removeSingleStone(loc);
+    removeSingleStone(loc); //replace?
     if(!isSuicide(loc,color))
       playMoveAssumeLegal(loc,color);
   }
@@ -716,7 +717,7 @@ Board::MoveRecord Board::playMoveRecorded(Loc loc, Player pla)
 //Undo the move given by record. Moves MUST be undone in the order they were made.
 //Undos will NOT typically restore the precise representation in the board to the way it was. The heads of chains
 //might change, the order of the circular lists might change, etc.
-void Board::undo(Board::MoveRecord record)
+void Board::undo(Board::MoveRecord record) //todo: understand the undo later
 {
   ko_loc = record.ko_loc;
 
@@ -1720,7 +1721,7 @@ bool Board::searchIsLadderCaptured(Loc loc, bool defenderFirst, vector<Loc>& buf
 }
 
 void Board::calculateArea(
-  Color* result,
+  Color* result, //this is the return results. Color area[Board::MAX_ARR_SIZE];
   bool nonPassAliveStones,
   bool safeBigTerritories,
   bool unsafeBigTerritories,
@@ -1795,7 +1796,7 @@ void Board::calculateIndependentLifeArea(
 // .ox.x.x
 // oxxxxxx
 // xx.....
-//The top left corner is black's pass-alive territory. It's also an empty region bordered only by white, but we should not mark
+//The top left corner is black (x)'s pass-alive territory. It's also an empty region bordered only by white(o), but we should not mark
 //it as white's unsafeBigTerritory because it's already marked as black's pass alive territory.
 
 void Board::calculateAreaForPla(
@@ -1986,7 +1987,7 @@ void Board::calculateAreaForPla(
 
   //Also accumulate all player heads
   int numPlaHeads = 0;
-  Loc allPlaHeads[MAX_PLAY_SIZE];
+  Loc allPlaHeads[MAX_PLAY_SIZE]; //need set some initial values?
   for(Loc loc = 0; loc < MAX_ARR_SIZE; loc++) {
     if(colors[loc] == pla && chain_head[loc] == loc)
       allPlaHeads[numPlaHeads++] = loc;

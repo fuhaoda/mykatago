@@ -39,7 +39,8 @@ int MainCmds::selfplay(int argc, const char* const* argv) {
   ConfigParser cfg;
   string modelsDir;
   string outputDir;
-  int64_t maxGamesTotal = ((int64_t)1) << 62;
+  //int64_t maxGamesTotal = ((int64_t)1) << 62; // original code
+  int64_t maxGamesTotal = ((int64_t)1) << 3; //change for a small scale simulation
   try {
     KataGoCommandLine cmd("Generate training data via self play.");
     cmd.addConfigFileArg("","");
