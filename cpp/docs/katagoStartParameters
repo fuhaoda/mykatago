@@ -1,0 +1,3 @@
+runsearchtests /Users/haodafu/Documents/CodeDev/KataGo/cpp/docs/model/katamodel.bin.gz false false 1 false
+
+evalsgf  -config /Users/haodafu/Documents/Softwares/katago/gtp.cfg -model /Users/haodafu/Documents/CodeDev/KataGo/cpp/docs/model/katamodel.bin.gz -v 500 /Users/haodafu/Documents/CodeDev/KataGo/cpp/docs/katago1.8.2_vs_Leela.sgf -move-num 20
