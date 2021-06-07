@@ -7,6 +7,7 @@
 #include "../core/fancymath.h"
 #include "../core/config_parser.h"
 #include "../core/base64.h"
+#include "../core/timer.h"
 #include "../game/board.h"
 #include "../game/rules.h"
 #include "../game/boardhistory.h"
